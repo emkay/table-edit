@@ -5,9 +5,12 @@
   "main": "index.js",
   "dependencies": {
     "bel": "^5.0.2",
-    "microcomponent": "^3.1.6"
+    "microcomponent": "^3.1.6",
+    "sheetify": "^6.1.0",
+    "tachyons": "^4.7.4"
   },
   "devDependencies": {
+    "bankai": "^8.1.1",
     "standard": "^10.0.2",
     "standard-version": "^4.2.0",
     "tape": "^4.7.0",
@@ -15,6 +18,7 @@
     "weallcontribute": "^1.0.8"
   },
   "scripts": {
+    "dev": "bankai --debug example.js",
     "lint": "standard",
     "test": "echo \"Error: no test specified\" && exit 1",
     "update-coc": "weallbehave -o . && git add CODE_OF_CONDUCT.md && git commit -m 'docs(coc): updated CODE_OF_CONDUCT.md'",
