@@ -1,21 +1,26 @@
-const Microcomponent = require('microcomponent')
+const Nanocomponent = require('nanocomponent')
 const html = require('bel')
 const css = require('sheetify')
 
 css('tachyons')
 
-class TableEdit extends Microcomponent {
-  constructor ({rows, headers}) {
+class TableEdit extends Nanocomponent {
+  constructor () {
     super()
 
-    this.headers = headers
-    this.rows = rows
+    this.headers = null
+    this.rows = null
+  }
 
-    this.on('render', this.render)
-    this.on('update', this.update)
-    this.on('load', this.load)
-    this.on('unload', this.unload)
-    return this
+  _onCheckClick (i) {
+    const state = this.state
+    const render = this.render.bind(this)
+    return (e) => {
+      const newState = Object.assign({}, state)
+      newState.rows[i].selected = !newState.rows[i].selected
+
+      return render(newState)
+    }
   }
 
   _renderHeaderCell (data) {
@@ -23,28 +28,35 @@ class TableEdit extends Microcomponent {
     return html`<th class="fw6 tl pa3 bg-white">${value}</th>`
   }
 
-  _renderCell (data) {
-    const value = data.value
-    return html`<td class="pa3">${value}</td>`
+  _renderCell (data, selected) {
+    const {value} = data
+    const cell = selected ? html`<input value="${value}">` : value
+    return html`<td class="pa3">${cell}</td>`
   }
 
-  _renderRow (cells) {
+  _renderRow (cells, i) {
+    const selected = i === -1 ? false : this.state.rows[i].selected
     return html`
       <tr class="stripe-dark">
-        <td class="pa3"><input type="checkbox"></td>
+        <td class="pa1"><input type="checkbox" checked="${selected}" onclick="${this._onCheckClick(i)}"></td>
         ${cells}
       </tr>`
   }
 
-  render () {
-    const headerCells = this.headers.map(cell => this._renderHeaderCell(cell))
-    const headerRows = this._renderRow(headerCells)
+  createElement (state) {
+    this.state = state
+    const rows = state.rows
+    const headers = state.headers
 
-    const rows = this.rows.map(row => {
+    const headerCells = headers.map(cell => this._renderHeaderCell(cell))
+    const headerRows = this._renderRow(headerCells, -1)
+
+    const renderedRows = rows.map((row, i) => {
       const cells = row.columns.map(cell => {
-        return this._renderCell(cell)
+        const selected = row.selected || false
+        return this._renderCell(cell, selected)
       })
-      return this._renderRow(cells)
+      return this._renderRow(cells, i)
     })
 
     return html`
@@ -55,7 +67,7 @@ class TableEdit extends Microcomponent {
             ${headerRows}
           </thead>
           <tbody class="lh-copy">
-            ${rows}
+            ${renderedRows}
           </tbody>
         </table>
         <div class="f6 w-100 mw8 center pa3">
@@ -65,8 +77,10 @@ class TableEdit extends Microcomponent {
     </div>`
   }
 
-  update (props) {
-    return props.text !== this.props.text
+  update (state) {
+    console.log('updating:', state)
+    console.log(Object.is(this.state, state))
+    return state !== this.state
   }
 
   load () {

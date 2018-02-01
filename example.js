@@ -32,5 +32,5 @@ const rows = [
   ]}
 ]
 
-const tableEdit = new TableEdit({rows, headers})
-document.body.appendChild(tableEdit.render())
+const tableEdit = new TableEdit()
+document.body.appendChild(tableEdit.render({rows, headers}))

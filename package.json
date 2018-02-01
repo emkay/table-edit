@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "bel": "^5.0.2",
-    "microcomponent": "^3.1.6",
+    "nanocomponent": "^6.2.0",
     "sheetify": "^6.1.0",
     "tachyons": "^4.7.4"
   },
